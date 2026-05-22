@@ -1,0 +1,13 @@
+spotfinder {
+  filter {
+    max_separation = 8
+  }
+  threshold {
+    dispersion {
+      kernel_size = 6 6
+      sigma_background = 3
+      sigma_strong = 1
+    }
+  }
+}
+

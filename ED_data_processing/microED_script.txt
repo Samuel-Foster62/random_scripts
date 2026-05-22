@@ -1,0 +1,73 @@
+ScriptName MicroED 
+
+# Set up the directory structure
+baseDir = X:\
+SetDirectory $baseDir
+ReportDateTime
+date = $ReportedValue1\
+time = $ReportedValue2
+MakeDirectory $date
+SetDirectory $date
+MakeDirectory MOVIES
+SetDirectory MOVIES
+
+ReportDirectory
+fullPath = $ReportedValue1
+
+#Specify the molecules name to append to the file
+prefix = 
+fileName = $prefix_$time
+
+# Set up exposure conditions for dose fractionation
+
+frameTime = 1
+rotPerSec = 0.25
+totalRotation = 80
+exposureTime = $totalRotation / $rotPerSec + 0.5
+ReportTiltAngle
+startAngle = $RepVal1
+endAngle = $startAngle + $totalRotation
+cameraLength = 300
+spotSize = 7 
+angle = 5
+saAperture = 100
+
+# Status of the omega filter either in or out
+filter =  in
+slitwidth = 30
+voltage = 300
+
+# Set camera conditions for the K2
+setK2ReadMode R 1
+setProcessing R 2
+setBinning R 1
+setDoseFracParams R 1 1 0 0
+setK2FileParams 1 0 0 0  0 0 
+setFrameTime R $frameTime
+setExposure R $exposureTime
+setFolderForFrames $fullPath
+setFrameBaseName 0 1 0 $fileName
+
+# Start data aquisition
+BackgroundTilt $endAngle 104
+Delay 0.5 sec
+SetBeamBlank 0
+R    
+SetBeamBlank 1
+
+openTextFile metadata o 0 $fileName_metadata.txt
+WriteLineToFile metadata frameTime (s): $frameTime
+WriteLineToFile metadata rotationSpeed (dps): $rotPerSec
+WriteLineToFile metadata totalRotation (deg): $totalRotation
+WriteLineToFile metadata exposureTime (s): $exposureTime
+WriteLineToFile metadata startAngle (deg): $startAngle
+WriteLineToFile metadata endAngle (deg): $endAngle
+WriteLineToFile metadata cameraLength (mm): $cameraLength
+WriteLineToFile metadata spotSize: $spotSize
+WriteLineToFile metadata angle: $angle
+WriteLineToFile metadata filterStatus: $filter
+WriteLineToFile metadata slitWidth (ev): $slitWidth
+writeLineToFile metadata selectedAreaAperture (um): $saAperture
+writeLineToFile metadata selectedAreaAperture (um): $voltage
+
+TiltTo 0 100
